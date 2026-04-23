@@ -17,7 +17,7 @@ const botToken = process.env.BOT_TOKEN;
 // Filter keywords and stop words
 const keywords = process.env.KEYWORDS.split(',').map(k => k.trim().toLowerCase());
 const stopWords = process.env.STOP_WORDS.split(',').map(s => s.trim().toLowerCase());
-const targetChatIds = process.env.TARGET_CHAT_IDS.split(',').map(id => id.trim());
+const targetChatIds = process.env.TARGET_CHAT_IDS ? process.env.TARGET_CHAT_IDS.split(',').map(id => id.trim()).filter(id => id !== '') : [];
 
 const client = new TelegramClient(stringSession, apiId, apiHash, {
   connectionRetries: 10,
@@ -60,14 +60,14 @@ async function startBot() {
       }
 
       // Check if chat is in target list (check ID and Username)
-      const isTarget = targetChatIds.some(target => {
+      const isTarget = targetChatIds.length === 0 || targetChatIds.some(target => {
         if (target.startsWith('@')) {
           return chatEntity.username === target.substring(1);
         }
         return chatEntity.id.toString() === target || `-100${chatEntity.id}` === target;
       });
 
-      if (!isTarget && targetChatIds.length > 0) return;
+      if (!isTarget) return;
 
       // Logic: Contains any keyword AND does NOT contain any stop word
       const hasKeyword = keywords.some(k => text.includes(k));
