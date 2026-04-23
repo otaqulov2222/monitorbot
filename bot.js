@@ -4,6 +4,7 @@ const { NewMessage } = require("telegram/events");
 const { initDB, saveLead } = require('./db');
 const logger = require('./logger');
 const https = require('https');
+const http = require('http'); // Added http
 require('dotenv').config();
 
 // Configuration from .env
@@ -167,3 +168,12 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 startBot();
+
+// Add a simple dummy server for Render to keep the service alive
+const port = process.env.PORT || 3000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot is running...\n');
+}).listen(port, () => {
+  logger.info(`Dummy server listening on port ${port}`);
+});
