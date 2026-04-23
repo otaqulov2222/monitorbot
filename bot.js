@@ -20,8 +20,13 @@ const stopWords = process.env.STOP_WORDS.split(',').map(s => s.trim().toLowerCas
 const targetChatIds = process.env.TARGET_CHAT_IDS ? process.env.TARGET_CHAT_IDS.split(',').map(id => id.trim()).filter(id => id !== '') : [];
 
 const client = new TelegramClient(stringSession, apiId, apiHash, {
-  connectionRetries: 10,
-  floodSleepThreshold: 60, // Auto wait for FloodWait up to 60s
+  connectionRetries: 15,
+  floodSleepThreshold: 60,
+  useWSS: false, // WSS ba'zida Renderda muammo beradi
+  autoReconnect: true,
+  deviceModel: "MonitorBot Server",
+  systemVersion: "Node.js Monitor",
+  appVersion: "1.0.0"
 });
 
 /**
